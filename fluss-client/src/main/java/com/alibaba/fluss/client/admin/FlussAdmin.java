@@ -65,6 +65,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -91,24 +92,17 @@ public class FlussAdmin implements Admin {
 
     @Override
     public CompletableFuture<SchemaInfo> getTableSchema(TablePath tablePath) {
-        GetTableSchemaRequest request = new GetTableSchemaRequest();
-        // requesting the latest schema of the given table by not setting schema id
-        request.setTablePath()
-                .setDatabaseName(tablePath.getDatabaseName())
-                .setTableName(tablePath.getTableName());
-        return gateway.getTableSchema(request)
-                .thenApply(
-                        r ->
-                                new SchemaInfo(
-                                        Schema.fromJsonBytes(r.getSchemaJson()), r.getSchemaId()));
+        return getTableSchema(tablePath, null);
     }
 
     @Override
-    public CompletableFuture<SchemaInfo> getTableSchema(TablePath tablePath, int schemaId) {
+    public CompletableFuture<SchemaInfo> getTableSchema(TablePath tablePath, Integer schemaId) {
         GetTableSchemaRequest request = new GetTableSchemaRequest();
-        // requesting the latest schema of the given table by not setting schema id
-        request.setSchemaId(schemaId)
-                .setTablePath()
+
+        if (Objects.nonNull(schemaId)) {
+            request.setSchemaId(schemaId);
+        }
+        request.setTablePath()
                 .setDatabaseName(tablePath.getDatabaseName())
                 .setTableName(tablePath.getTableName());
         return gateway.getTableSchema(request)

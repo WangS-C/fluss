@@ -76,7 +76,7 @@ public interface Admin extends AutoCloseable {
      *
      * @param tablePath the table path of the table.
      */
-    CompletableFuture<SchemaInfo> getTableSchema(TablePath tablePath, int schemaId);
+    CompletableFuture<SchemaInfo> getTableSchema(TablePath tablePath, Integer schemaId);
 
     /**
      * Create a new database asynchronously.
